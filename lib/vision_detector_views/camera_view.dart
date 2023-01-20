@@ -7,6 +7,7 @@ import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../main.dart';
+import 'object_detector_view.dart';
 
 enum ScreenMode { liveFeed, gallery }
 
@@ -109,19 +110,21 @@ class _CameraViewState extends State<CameraView> {
 
             Row(
                 children: [
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child:IconButton(
-                      color: Colors.white,
-                      iconSize: 40,
-                      icon: Icon(Icons.flip_camera_android_outlined),
-                      onPressed: _switchLiveCamera,
-                      )
+                   Align(
+                      alignment: Alignment.bottomRight,
+                        child: IconButton(
+                          color: Colors.white,
+                          iconSize: 40,
+                          icon: Icon(Icons.flip_camera_android_outlined),
+                          onPressed: _switchLiveCamera,
+                          ),
+
                   ),
                   Align( alignment: Alignment.bottomCenter,
                     child: InkWell(
                       onTap: () {
-                        _controller!.setZoomLevel(zoomLevel);
+
+                        _controller!.setZoomLevel(ZoomValueInstance.ZoomValue);
                     },
                       child: Container(
                         width: 50,

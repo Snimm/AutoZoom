@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'dart:io' as io;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_ml_kit_example/vision_detector_views/painters/coordinates_translator.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,6 +12,12 @@ import 'package:path_provider/path_provider.dart';
 import 'camera_view.dart';
 import 'find_zoom_value.dart';
 import 'painters/object_detector_painter.dart';
+class zoomValueClass {
+   late var ZoomValue;
+   zoomValueClass(this.ZoomValue);
+}
+
+var ZoomValueInstance = zoomValueClass(1.0);
 
 class ObjectDetectorView extends StatefulWidget {
   @override
@@ -22,6 +30,7 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
   bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
+  double? _zoomValue = 1.0;
 
   @override
   void initState() {
@@ -48,6 +57,7 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
       },
       onScreenModeChanged: _onScreenModeChanged,
       initialDirection: CameraLensDirection.back,
+      //Zoom: _zoomValue,
     );
   }
 
@@ -116,10 +126,11 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
           objects,
           inputImage.inputImageData!.imageRotation,
           inputImage.inputImageData!.size);
-      var zoom_level = findZoomValue(
-          objects,
-          inputImage.inputImageData!.imageRotation,
-          inputImage.inputImageData!.size);
+      final Quad = painter.getCoordinates();
+      print('Quad: ${Quad.right} ');
+      double zoomValue = FindZoomValue(Quad);
+      print('ZoomValue: $zoomValue');
+      ZoomValueInstance.ZoomValue = zoomValue;
       _customPaint = CustomPaint(painter: painter);
     }
     else {
@@ -151,5 +162,11 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
     }
     return file.path;
+  }
+
+  double FindZoomValue(Quad){
+    double zoomValue = 5;
+
+    return zoomValue;
   }
 }

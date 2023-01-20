@@ -2,13 +2,33 @@ import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit_example/vision_detector_views/find_zoom_value.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 
 import 'coordinates_translator.dart';
 
+class MyObject {
+  late double right;
+  late double left;
+  late double top;
+  late double bottom;
+  MyObject(this.left, this.top, this.right, this.bottom);
+}
+
+class MyCentral {
+  late double right;
+  late double left;
+  late double top;
+  late double bottom;
+  MyCentral(this.left, this.top, this.right, this.bottom);
+}
+
+MyCentral myCentral = MyCentral(0, 0, 0, 0);
+
 class ObjectDetectorPainter extends CustomPainter {
   ObjectDetectorPainter(this.objects, this.rotation, this.absoluteSize);
 
+  var many_objects = <MyObject>[];
   final List<DetectedObject> objects;
   final Size absoluteSize;
   final InputImageRotation rotation;
@@ -23,13 +43,9 @@ class ObjectDetectorPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
       ..color = Colors.redAccent;
-    final Paint paint2 = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      ..color = Colors.redAccent;
 
     final Paint background = Paint()..color = Color(0x99000000);
-    bool isCentral = false;
+    int isCentralPosition = -1;
     for (final DetectedObject detectedObject in objects) {
 
       final ParagraphBuilder builder = ParagraphBuilder(
@@ -47,6 +63,8 @@ class ObjectDetectorPainter extends CustomPainter {
 
       builder.pop();
 
+
+
       final left = translateX(
           detectedObject.boundingBox.left, rotation, size, absoluteSize);
       final top = translateY(
@@ -57,11 +75,8 @@ class ObjectDetectorPainter extends CustomPainter {
           detectedObject.boundingBox.bottom, rotation, size, absoluteSize);
 
 
-        canvas.drawRect(
-          Rect.fromLTRB(left, top, right, bottom),
-          paintgreen,
-        );
 
+        many_objects.add(MyObject(left, top, right, bottom));
 
 
       canvas.drawParagraph(
@@ -72,6 +87,35 @@ class ObjectDetectorPainter extends CustomPainter {
         Offset(left, top),
       );
     }
+    if(many_objects.length == 0){
+      myCentral.left = 0;
+      myCentral.top = 0;
+      myCentral.right = 0;
+      myCentral.bottom = 0;
+    }
+    for (int i = 0; i <many_objects.length; i++){
+      if (many_objects[i].left < size.width/2 && many_objects[i].right > size.width/2 && many_objects[i].top < size.height/2 && many_objects[i].bottom > size.height/2){
+        isCentralPosition = i;
+        myCentral.left = many_objects[i].left;
+        myCentral.top = many_objects[i].top;
+        myCentral.right = many_objects[i].right;
+        myCentral.bottom = many_objects[i].bottom;
+        canvas.drawRect(
+          Rect.fromLTRB(many_objects[i].left, many_objects[i].top, many_objects[i].right, many_objects[i].bottom),
+          paintred,
+        );
+      }
+      else{
+        canvas.drawRect(
+          Rect.fromLTRB(many_objects[i].left, many_objects[i].top, many_objects[i].right, many_objects[i].bottom),
+          paintgreen,
+        );
+      }
+    }
+    many_objects.clear();
+  }
+  getCoordinates(){
+    return myCentral;
   }
 
   @override
