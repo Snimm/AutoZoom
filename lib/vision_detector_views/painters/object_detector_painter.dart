@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit_example/vision_detector_views/find_zoom_value.dart';
+
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 
 import 'coordinates_translator.dart';
@@ -20,10 +20,12 @@ class MyCentral {
   late double left;
   late double top;
   late double bottom;
-  MyCentral(this.left, this.top, this.right, this.bottom);
+  late double width;
+  late double height;
+  MyCentral(this.left, this.top, this.right, this.bottom, this.width, this.height);
 }
 
-MyCentral myCentral = MyCentral(0, 0, 0, 0);
+MyCentral myCentral = MyCentral(0, 0, 0, 0, 0, 0);
 
 class ObjectDetectorPainter extends CustomPainter {
   ObjectDetectorPainter(this.objects, this.rotation, this.absoluteSize);
@@ -35,6 +37,11 @@ class ObjectDetectorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    var width = size.width;
+    var height = size.height;
+    myCentral.width = width;
+    myCentral.height = height;
+    //print("width $width height $height");
     final Paint paintgreen = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
@@ -62,8 +69,6 @@ class ObjectDetectorPainter extends CustomPainter {
       }
 
       builder.pop();
-
-
 
       final left = translateX(
           detectedObject.boundingBox.left, rotation, size, absoluteSize);
@@ -94,7 +99,8 @@ class ObjectDetectorPainter extends CustomPainter {
       myCentral.bottom = 0;
     }
     for (int i = 0; i <many_objects.length; i++){
-      if (many_objects[i].left < size.width/2 && many_objects[i].right > size.width/2 && many_objects[i].top < size.height/2 && many_objects[i].bottom > size.height/2){
+
+      if (many_objects[i].left < width/2 && many_objects[i].right > width/2 && many_objects[i].top < height/2 && many_objects[i].bottom > height/2){
         isCentralPosition = i;
         myCentral.left = many_objects[i].left;
         myCentral.top = many_objects[i].top;

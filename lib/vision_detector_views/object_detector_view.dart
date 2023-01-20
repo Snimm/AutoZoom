@@ -1,16 +1,16 @@
-import 'dart:developer';
+
 import 'dart:io' as io;
+import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_ml_kit_example/vision_detector_views/painters/coordinates_translator.dart';
+
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'camera_view.dart';
-import 'find_zoom_value.dart';
 import 'painters/object_detector_painter.dart';
 class zoomValueClass {
    late var ZoomValue;
@@ -30,7 +30,7 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
   bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
-  double? _zoomValue = 1.0;
+
 
   @override
   void initState() {
@@ -127,9 +127,9 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
           inputImage.inputImageData!.imageRotation,
           inputImage.inputImageData!.size);
       final Quad = painter.getCoordinates();
-      print('Quad: ${Quad.right} ');
+      //print('Quad: ${Quad.right} ');
       double zoomValue = FindZoomValue(Quad);
-      print('ZoomValue: $zoomValue');
+      //print('ZoomValue: $zoomValue');
       ZoomValueInstance.ZoomValue = zoomValue;
       _customPaint = CustomPaint(painter: painter);
     }
@@ -166,7 +166,22 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
 
   double FindZoomValue(Quad){
     double zoomValue = 5;
-
+    Quad.left;
+    Quad.right;
+    Quad.top;
+    Quad.bottom;
+    Quad.width;
+    Quad.height;
+    var directionScale = 1;
+    var zoomScale = 10;
+    var leftMargin = Quad.left;
+    var rightMargin = Quad.width - Quad.right;
+    var topMargin = Quad.top;
+    var bottomMargin = Quad.height - Quad.bottom;
+    var minimumHorizontalMargin = min<double>(leftMargin, rightMargin);
+    var minimumVerticalMargin = min<double>(topMargin, bottomMargin);
+    var minimumMargin = min<double>(minimumHorizontalMargin, directionScale*minimumVerticalMargin);
+    zoomValue = minimumMargin / zoomScale;
     return zoomValue;
   }
 }
