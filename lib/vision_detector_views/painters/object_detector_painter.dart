@@ -117,7 +117,7 @@ class ObjectDetectorPainter extends CustomPainter {
       //and then dividing it by the sum of the width and height of the screen
       //The larger the value, the closer the object is to the center of the screen.
       //we multiply by scaling factor so larger object have bigger value
-      var scale_factor = 0;
+      var scale_factor = .1;
       central_value = ((((width/2) - ((right + left)/2)).abs() + ((height/2) - ((top + bottom)/2)).abs()) / (width + height)) + scale_factor*((right - left) + (bottom - top));
       return central_value;
     }
