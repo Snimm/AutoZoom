@@ -165,23 +165,33 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
   }
 
   double FindZoomValue(Quad){
-    double zoomValue = 5;
     Quad.left;
     Quad.right;
     Quad.top;
     Quad.bottom;
     Quad.width;
     Quad.height;
-    var directionScale = 1;
-    var zoomScale = 10;
-    var leftMargin = Quad.left;
-    var rightMargin = Quad.width - Quad.right;
-    var topMargin = Quad.top;
-    var bottomMargin = Quad.height - Quad.bottom;
-    var minimumHorizontalMargin = min<double>(leftMargin, rightMargin);
-    var minimumVerticalMargin = min<double>(topMargin, bottomMargin);
-    var minimumMargin = min<double>(minimumHorizontalMargin, directionScale*minimumVerticalMargin);
-    zoomValue = minimumMargin / zoomScale;
+    //scale = (w/2)/(w/2-x) for near origin
+    //scale = (w/2)/(x-w/2) for further origin
+
+    double scale_function(value, direction){
+      if(value>direction/2){
+        return (direction/2)/(value-direction/2);
+      }
+      else{
+        return (direction/2)/(direction/2 - value);
+      }
+    }
+    var scale_width_left = scale_function(Quad.left, Quad.width);
+    var scale_width_right = scale_function(Quad.right, Quad.width);
+    var scale_height_top = scale_function(Quad.top, Quad.height);
+    var scale_height_bottom = scale_function(Quad.bottom, Quad.height);
+    var scale_width = min<double>(scale_width_left, scale_width_right);
+    var scale_height = min<double>(scale_height_top, scale_height_bottom);
+    var zoomValue = min<double>(scale_width, scale_height);
+    print('QuadRight: ${Quad.right}. QuadLeft: ${Quad.left}. QuadTop: ${Quad.top}. QuadBottom: ${Quad.bottom}. QuadWidth: ${Quad.width}. QuadHeight: ${Quad.height}.');
+    print('ZoomValue: $zoomValue,  scale_width_left: $scale_width_left, scale_width_right: $scale_width_right, scale_height_top: $scale_height_top, scale_height_bottom: $scale_height_bottom scale_width: $scale_width, scale_height: $scale_height,');
+
     return zoomValue;
   }
 }

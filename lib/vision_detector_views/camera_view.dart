@@ -396,7 +396,4 @@ class _CameraViewState extends State<CameraView> {
   }
 }
 
-class FindZoomlevel{
 
-
-}
