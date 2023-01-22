@@ -122,9 +122,9 @@ class _CameraViewState extends State<CameraView> {
                   ),
                   Align( alignment: Alignment.bottomCenter,
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
 
-                        _controller!.setZoomLevel(ZoomValueInstance.ZoomValue);
+                        await _controller!.setZoomLevel(ZoomValueInstance.ZoomValue);
                     },
                       child: Container(
                         width: 50,

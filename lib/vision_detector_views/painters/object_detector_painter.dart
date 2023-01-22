@@ -34,7 +34,18 @@ class ObjectDetectorPainter extends CustomPainter {
   final List<DetectedObject> objects;
   final Size absoluteSize;
   final InputImageRotation rotation;
-
+  var central_value_list = <double>[];
+  int indexOfLargest(List<double> list) {
+    double largest = list[0];
+    int index = 0;
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > largest) {
+        largest = list[i];
+        index = i;
+      }
+    }
+    return index;
+  }
   @override
   void paint(Canvas canvas, Size size) {
     var width = size.width;
@@ -98,9 +109,30 @@ class ObjectDetectorPainter extends CustomPainter {
       myCentral.right = 0;
       myCentral.bottom = 0;
     }
-    for (int i = 0; i <many_objects.length; i++){
 
-      if (many_objects[i].left < width/2 && many_objects[i].right > width/2 && many_objects[i].top < height/2 && many_objects[i].bottom > height/2){
+    double findCentralValue(double left, double top, double right, double bottom){
+      double central_value = 0;
+      //Central value is the value that indicates how close the object is to the center of the screen
+      //Central value is calculated by taking the distance between the center of the screen and the center of the object
+      //and then dividing it by the sum of the width and height of the screen
+      //The larger the value, the closer the object is to the center of the screen.
+      //we multiply by scaling factor so larger object have bigger value
+      var scale_factor = .1;
+      central_value = ((((width/2) - ((right + left)/2)).abs() + ((height/2) - ((top + bottom)/2)).abs()) / (width + height)) + scale_factor*((right - left) + (bottom - top));
+      return central_value;
+    }
+
+    for (int i = 0; i <many_objects.length; i++){
+      central_value_list.add(findCentralValue(many_objects[i].left, many_objects[i].top, many_objects[i].right, many_objects[i].bottom));
+    }
+    if (central_value_list.length != 0){
+      isCentralPosition = indexOfLargest(central_value_list);
+    }
+   //print("cnetral value list $central_value_list");
+    for (int i = 0; i <many_objects.length; i++){
+      //print("central value $i ${central_value_list[i]}");
+      //print(' largest index = $isCentralPosition');
+      if (i == isCentralPosition){
         isCentralPosition = i;
         myCentral.left = many_objects[i].left;
         myCentral.top = many_objects[i].top;
@@ -118,6 +150,7 @@ class ObjectDetectorPainter extends CustomPainter {
         );
       }
     }
+    central_value_list.clear();
     many_objects.clear();
   }
   getCoordinates(){

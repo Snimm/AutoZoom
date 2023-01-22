@@ -173,7 +173,7 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
     Quad.height;
     //scale = (w/2)/(w/2-x) for near origin
     //scale = (w/2)/(x-w/2) for further origin
-
+    //repeated zoom does not work as zoom function does not take into account the current zoom value
     double scale_function(value, direction){
       if(value>direction/2){
         return (direction/2)/(value-direction/2);
@@ -189,8 +189,8 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
     var scale_width = min<double>(scale_width_left, scale_width_right);
     var scale_height = min<double>(scale_height_top, scale_height_bottom);
     var zoomValue = min<double>(scale_width, scale_height);
-    print('QuadRight: ${Quad.right}. QuadLeft: ${Quad.left}. QuadTop: ${Quad.top}. QuadBottom: ${Quad.bottom}. QuadWidth: ${Quad.width}. QuadHeight: ${Quad.height}.');
-    print('ZoomValue: $zoomValue,  scale_width_left: $scale_width_left, scale_width_right: $scale_width_right, scale_height_top: $scale_height_top, scale_height_bottom: $scale_height_bottom scale_width: $scale_width, scale_height: $scale_height,');
+    //print('QuadRight: ${Quad.right}. QuadLeft: ${Quad.left}. QuadTop: ${Quad.top}. QuadBottom: ${Quad.bottom}. QuadWidth: ${Quad.width}. QuadHeight: ${Quad.height}.');
+    //print('ZoomValue: $zoomValue,  scale_width_left: $scale_width_left, scale_width_right: $scale_width_right, scale_height_top: $scale_height_top, scale_height_bottom: $scale_height_bottom scale_width: $scale_width, scale_height: $scale_height,');
 
     return zoomValue;
   }
