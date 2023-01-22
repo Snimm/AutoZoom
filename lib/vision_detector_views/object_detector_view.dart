@@ -55,22 +55,9 @@ class _ObjectDetectorView extends State<ObjectDetectorView> {
       onImage: (inputImage) {
         processImage(inputImage);
       },
-      onScreenModeChanged: _onScreenModeChanged,
       initialDirection: CameraLensDirection.back,
       //Zoom: _zoomValue,
     );
-  }
-
-  void _onScreenModeChanged(ScreenMode mode) {
-    switch (mode) {
-      case ScreenMode.gallery:
-        _initializeDetector(DetectionMode.single);
-        return;
-
-      case ScreenMode.liveFeed:
-        _initializeDetector(DetectionMode.stream);
-        return;
-    }
   }
 
   void _initializeDetector(DetectionMode mode) async {
